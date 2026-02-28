@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AssistedApp Auto-Filler</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      width: 320px;
+      height: auto;
+    }
+  </style>
+</head>
+<body class="bg-neutral-950 text-neutral-100 font-sans p-4 border border-neutral-800">
+  <div class="flex flex-col gap-4">
+    <div class="flex items-center gap-2 border-b border-neutral-800 pb-3">
+      <div class="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center font-bold text-white shadow-lg shadow-violet-900/50">A</div>
+      <h1 class="text-lg font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-violet-300 to-indigo-400">AssistedApp</h1>
+    </div>
+    
+    <div class="space-y-2">
+      <p class="text-sm text-neutral-400">Automatically map your Master Profile to application fields on the current page.</p>
+    </div>
+
+    <div class="flex flex-col gap-2 mt-2">
+      <button id="connectBtn" class="w-full py-2 px-4 rounded-md bg-neutral-800 hover:bg-neutral-700 text-sm font-medium transition-colors border border-neutral-700">
+        Connect to AssistedApp
+      </button>
+      
+      <button id="fillBtn" class="w-full py-2 px-4 rounded-md bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium transition-colors shadow-lg shadow-violet-900/30">
+        Auto-Fill Page
+      </button>
+    </div>
+
+    <div id="status" class="text-xs text-center text-neutral-500 mt-2 hidden">
+      Status updates will appear here...
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

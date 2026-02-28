@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "name": "AssistedApp Auto-Filler",
+    "version": "1.0",
+    "description": "Auto-fills university application forms using data from your AssistedApp Master Profile.",
+    "permissions": [
+        "activeTab",
+        "scripting"
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "AssistedApp"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ]
+}
