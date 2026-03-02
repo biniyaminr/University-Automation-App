@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { FileIcon, UploadCloudIcon, FolderIcon, MoreVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
+import { FileIcon, UploadCloudIcon, FolderIcon, MoreVerticalIcon, PencilIcon, TrashIcon, LanguagesIcon, AwardIcon, BriefcaseIcon } from "lucide-react";
 import { toast } from "sonner";
 
 export default function DocumentsPage() {
@@ -192,9 +192,11 @@ export default function DocumentsPage() {
                                         <SelectItem value="RESUME">Resume / CV</SelectItem>
                                         <SelectItem value="TRANSCRIPT">Academic Transcript</SelectItem>
                                         <SelectItem value="PASSPORT">Passport / ID</SelectItem>
+                                        <SelectItem value="ENGLISH_PROFICIENCY">English Proficiency (IELTS/TOEFL)</SelectItem>
                                         <SelectItem value="ESSAY">Personal Essay</SelectItem>
                                         <SelectItem value="RECOMMENDATION">Letter of Recommendation</SelectItem>
-                                        <SelectItem value="PORTFOLIO">Portfolio URL</SelectItem>
+                                        <SelectItem value="CERTIFICATE">Certificate / Award</SelectItem>
+                                        <SelectItem value="PORTFOLIO">Portfolio / Work</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -258,9 +260,11 @@ export default function DocumentsPage() {
                                         <SelectItem value="RESUME">Resume / CV</SelectItem>
                                         <SelectItem value="TRANSCRIPT">Academic Transcript</SelectItem>
                                         <SelectItem value="PASSPORT">Passport / ID</SelectItem>
+                                        <SelectItem value="ENGLISH_PROFICIENCY">English Proficiency (IELTS/TOEFL)</SelectItem>
                                         <SelectItem value="ESSAY">Personal Essay</SelectItem>
                                         <SelectItem value="RECOMMENDATION">Letter of Recommendation</SelectItem>
-                                        <SelectItem value="PORTFOLIO">Portfolio URL</SelectItem>
+                                        <SelectItem value="CERTIFICATE">Certificate / Award</SelectItem>
+                                        <SelectItem value="PORTFOLIO">Portfolio / Work</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -319,9 +323,15 @@ export default function DocumentsPage() {
                                                 <div className={`p-2 rounded-lg ${doc.type === 'RESUME' ? 'bg-indigo-500/10 text-indigo-400' :
                                                     doc.type === 'TRANSCRIPT' ? 'bg-emerald-500/10 text-emerald-400' :
                                                         doc.type === 'PASSPORT' ? 'bg-amber-500/10 text-amber-400' :
-                                                            'bg-blue-500/10 text-blue-400'
+                                                            doc.type === 'ENGLISH_PROFICIENCY' ? 'bg-purple-500/10 text-purple-400' :
+                                                                doc.type === 'CERTIFICATE' ? 'bg-rose-500/10 text-rose-400' :
+                                                                    doc.type === 'PORTFOLIO' ? 'bg-cyan-500/10 text-cyan-400' :
+                                                                        'bg-blue-500/10 text-blue-400'
                                                     }`}>
-                                                    <FileIcon className="w-6 h-6" />
+                                                    {doc.type === 'ENGLISH_PROFICIENCY' ? <LanguagesIcon className="w-6 h-6" /> :
+                                                        doc.type === 'CERTIFICATE' ? <AwardIcon className="w-6 h-6" /> :
+                                                            doc.type === 'PORTFOLIO' ? <BriefcaseIcon className="w-6 h-6" /> :
+                                                                <FileIcon className="w-6 h-6" />}
                                                 </div>
                                                 <div onClick={(e) => e.stopPropagation()}>
                                                     <DropdownMenu>

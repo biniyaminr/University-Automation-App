@@ -15,7 +15,7 @@ import {
     SidebarMenuItem,
     SidebarRail,
 } from "@/components/ui/sidebar";
-import { Home, FileText, User, GraduationCap, Briefcase, Compass, LogIn, CreditCard } from "lucide-react";
+import { Home, FileText, User, GraduationCap, Briefcase, Compass, LogIn, CreditCard, Sparkles } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 
 export function AppSidebar() {
@@ -51,6 +51,11 @@ export function AppSidebar() {
             title: "Application Tracker",
             url: "/applications",
             icon: GraduationCap,
+        },
+        {
+            title: "Live Feed",
+            url: "/feed",
+            icon: Sparkles,
         },
         {
             title: "Pricing & Pro",

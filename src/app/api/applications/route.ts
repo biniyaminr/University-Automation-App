@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 
 export async function GET() {
     try {
-        const user = await prisma.user.findFirst();
+        const { userId: clerkId } = await auth();
+        if (!clerkId) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { userId: clerkId }
+        });
+
         if (!user) {
             return NextResponse.json([], { status: 200 });
         }
@@ -22,13 +31,22 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
-        // Find existing user or create a default one to satisfy relational constraints
-        let user = await prisma.user.findFirst();
+        const { userId: clerkId } = await auth();
+        if (!clerkId) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        let user = await prisma.user.findUnique({
+            where: { userId: clerkId }
+        });
+
         if (!user) {
+            // If they have no profile yet, we create a skeleton profile
             user = await prisma.user.create({
                 data: {
-                    fullName: "Mission Commander",
-                    email: "commander@assistedapp.com",
+                    userId: clerkId,
+                    fullName: "Student",
+                    email: `user_${clerkId}@temporary.com`, // Fallback email
                 }
             });
         }

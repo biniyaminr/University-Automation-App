@@ -6,12 +6,13 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
   id              String            @id @default(cuid())
+  userId          String?           @unique // Clerk User ID
   fullName        String
   email           String            @unique
   phone           String?
@@ -97,3 +98,18 @@ model Application {
   createdAt            DateTime   @default(now())
   updatedAt            DateTime   @updatedAt
 }
+
+model Opportunity {
+  id              String   @id @default(cuid())
+  userId          String?  // Clerk User ID if personal
+  university      String
+  programName     String
+  description     String?
+  deadline        DateTime?
+  isScholarship   Boolean  @default(false)
+  isFreeApp       Boolean  @default(false)
+  country         String?
+  link            String
+  createdAt       DateTime @default(now())
+}
+

@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 
 export async function GET() {
     try {
-        // In a real app with auth, we'd get the user ID from the session.
-        // For this prototype, we'll fetch the most recently updated user profile.
-        const user = await prisma.user.findFirst({
-            orderBy: { updatedAt: 'desc' },
+        const { userId: clerkId } = await auth();
+        if (!clerkId) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { userId: clerkId },
             include: { educations: true },
         });
 
@@ -23,6 +27,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
+        const { userId: clerkId } = await auth();
+        if (!clerkId) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
         const body = await request.json();
         const { fullName, email, phone, address, dob, citizenship, zipCode, institutionName, major, city, country, gpa, startDate, gradDate } = body;
 
@@ -31,12 +40,11 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Name and email are required" }, { status: 400 });
         }
 
-        // In a prototype without auth, we'll try to find an existing user by email
-        // or create a new one. In reality, we'd update by Auth User ID.
         const user = await prisma.user.upsert({
-            where: { email },
+            where: { userId: clerkId },
             update: {
                 fullName,
+                email, // In case they changed their email
                 phone,
                 address,
                 dob: dob ? new Date(dob) : null,
@@ -44,6 +52,7 @@ export async function POST(request: Request) {
                 zipCode,
             },
             create: {
+                userId: clerkId,
                 fullName,
                 email,
                 phone,
@@ -56,8 +65,6 @@ export async function POST(request: Request) {
 
         // Handle Education entry if provided
         if (institutionName) {
-            // For simplicity in this demo, we'll clear old education records and create a new one
-            // to simulate saving the "primary" education history section.
             await prisma.education.deleteMany({
                 where: { userId: user.id },
             });

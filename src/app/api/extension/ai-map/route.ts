@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Groq from "groq-sdk";
+
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export async function POST(req: Request) {
     try {
@@ -16,11 +18,8 @@ export async function POST(req: Request) {
         // --------------------------------------------------------------------------------
         // Prompt Engineering Engine
         // --------------------------------------------------------------------------------
-        const systemInstruction = `You are an expert data mapper for university admissions. 
-You will receive a list of scraped HTML labels from a university portal and a list of available document categories from a user's vault. 
-Map each scraped label to the single most logically equivalent vault category. 
-If no logical match exists, return null for that label.
-CRITICAL: You must return a single, flat JSON object where the keys are the exact scraped labels and the values are the matched vault categories. DO NOT return an array. Example format: {'motivation letter': 'Personal Essay', 'curriculum vitae': 'Resume / CV'}.`;
+        const systemInstruction = `You are an intelligent form field mapper. You must return strictly a JSON object where the keys are the exact 'Scraped Labels' and the values are the closest matching 'Available Categories'. If there is no good match, return null for that key.
+        Example format: {"motivation letter": "Personal Essay", "curriculum vitae": "Resume / CV"}`;
 
         const prompt = `
 Available Categories:
@@ -35,23 +34,20 @@ ${JSON.stringify(scrapedLabels)}
         console.log("---------------------------");
 
         // --------------------------------------------------------------------------------
-        // AI Integration: Gemini 2.5 Flash
+        // AI Integration: Groq (Llama 3.3 70B)
         // --------------------------------------------------------------------------------
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+        console.log("🧠 Generating AI mapping via Groq...");
 
-        // Use gemini-2.5-flash with strict JSON output configuration
-        const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-flash",
-            systemInstruction: systemInstruction,
-            generationConfig: {
-                responseMimeType: "application/json",
-            }
+        const response = await groq.chat.completions.create({
+            model: "llama-3.3-70b-versatile",
+            messages: [
+                { role: "system", content: systemInstruction },
+                { role: "user", content: prompt }
+            ],
+            response_format: { type: "json_object" }
         });
 
-        console.log("🧠 Generating AI mapping...");
-        const result = await model.generateContent(prompt);
-        const responseText = result.response.text();
-
+        const responseText = response.choices[0]?.message?.content || "{}";
         console.log("🤖 AI Response Raw:", responseText);
 
         const aiResponseJSON = JSON.parse(responseText);
