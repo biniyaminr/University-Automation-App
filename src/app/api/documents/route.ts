@@ -47,39 +47,19 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "No master profile found." }, { status: 400 });
         }
 
-        const formData = await request.formData();
-        const file = formData.get("file") as File;
-        const name = formData.get("name") as string;
-        const type = formData.get("type") as string;
-        const applicationId = formData.get("applicationId") as string | null;
+        const body = await request.json();
+        const { name, type, fileUrl, applicationId } = body;
 
-        if (!file || !name || !type) {
-            return NextResponse.json({ error: "Missing required fields (file, name, type)" }, { status: 400 });
+        if (!name || !type || !fileUrl) {
+            return NextResponse.json({ error: "Missing required fields (name, type, fileUrl)" }, { status: 400 });
         }
-
-        // Prepare physical upload directory
-        const uploadDir = path.join(process.cwd(), "public", "uploads");
-        await fs.mkdir(uploadDir, { recursive: true });
-
-        // Build a unique and safe file name
-        const cleanFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, "");
-        const uniqueFileName = `${Date.now()}-${cleanFileName}`;
-        const filePath = path.join(uploadDir, uniqueFileName);
-
-        // Write the file buffer to disk
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-        await fs.writeFile(filePath, buffer);
-
-        // Save relative path for browser access
-        const fileUrl = `/uploads/${uniqueFileName}`;
 
         const newDoc = await prisma.document.create({
             data: {
                 name,
                 type,
                 fileUrl,
-                applicationId: applicationId || null,
+                applicationId: applicationId && applicationId !== "none" ? applicationId : null,
                 userId: user.id
             },
             include: { application: true }
@@ -87,7 +67,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json(newDoc, { status: 201 });
     } catch (error) {
-        console.error("Error uploading document:", error);
-        return NextResponse.json({ error: "Failed to upload document" }, { status: 500 });
+        console.error("Error creating document record:", error);
+        return NextResponse.json({ error: "Failed to create document record" }, { status: 500 });
     }
 }

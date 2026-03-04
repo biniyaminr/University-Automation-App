@@ -12,6 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { FileIcon, UploadCloudIcon, FolderIcon, MoreVerticalIcon, PencilIcon, TrashIcon, LanguagesIcon, AwardIcon, BriefcaseIcon } from "lucide-react";
 import { toast } from "sonner";
+import { generateReactHelpers } from "@uploadthing/react";
+import type { OurFileRouter } from "@/app/api/uploadthing/core";
+
+const { useUploadThing } = generateReactHelpers<OurFileRouter>();
 
 export default function DocumentsPage() {
     const [documents, setDocuments] = useState<any[]>([]);
@@ -19,12 +23,13 @@ export default function DocumentsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isUploadOpen, setIsUploadOpen] = useState(false);
 
-    // Upload Form State
     const [name, setName] = useState("");
     const [type, setType] = useState("RESUME");
     const [applicationId, setApplicationId] = useState("none");
-    const [file, setFile] = useState<File | null>(null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const { startUpload, isUploading } = useUploadThing("documentUploader");
 
     // Edit Form State
     const [isEditOpen, setIsEditOpen] = useState(false);
@@ -57,44 +62,40 @@ export default function DocumentsPage() {
         fetchData();
     }, []);
 
-    const handleUpload = async (e: React.FormEvent) => {
+    const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!file) {
+        if (!selectedFile) {
             toast.error("Please select a file to upload.");
             return;
         }
 
         setIsSubmitting(true);
         try {
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("name", name);
-            formData.append("type", type);
-            if (applicationId !== "none") {
-                formData.append("applicationId", applicationId);
-            }
-
-            const res = await fetch('/api/documents', {
-                method: "POST",
-                body: formData
-            });
-
-            if (!res.ok) {
-                const error = await res.json();
-                toast.error(error.error || "Failed to upload document");
+            const res = await startUpload([selectedFile]);
+            if (!res || res.length === 0) {
+                toast.error("Upload failed.");
                 return;
             }
 
-            toast.success("Document uploaded successfully!");
+            const saveRes = await fetch('/api/documents', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, type, applicationId, fileUrl: res[0].url })
+            });
+
+            if (!saveRes.ok) throw new Error("Database save failed");
+
+            toast.success("Document saved to vault!");
             setIsUploadOpen(false);
             setName("");
             setType("RESUME");
             setApplicationId("none");
-            setFile(null);
+            setSelectedFile(null);
             fetchData();
         } catch (error) {
-            toast.error("Network error during upload");
+            console.error(error);
+            toast.error("Failed to upload and save document.");
         } finally {
             setIsSubmitting(false);
         }
@@ -176,7 +177,7 @@ export default function DocumentsPage() {
                                 Simulated upload. Attach a file to an application folder or your master profile.
                             </DialogDescription>
                         </DialogHeader>
-                        <form onSubmit={handleUpload} className="space-y-4">
+                        <div className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="name" className="text-neutral-300">Document Name</Label>
                                 <Input id="name" value={name} onChange={e => setName(e.target.value)} required placeholder="e.g. Biniyam_Dereje_CV.pdf" className="bg-neutral-950/50 border-neutral-800 text-neutral-200" />
@@ -216,23 +217,22 @@ export default function DocumentsPage() {
                                 </Select>
                             </div>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="file" className="text-neutral-300">File Attachment</Label>
+                            <div className="space-y-2 pt-2">
+                                <Label className="text-neutral-300 block mb-2">File Attachment</Label>
                                 <Input
                                     id="file"
                                     type="file"
-                                    onChange={e => setFile(e.target.files?.[0] || null)}
-                                    required
+                                    onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
                                     className="bg-neutral-950/50 border-neutral-800 text-neutral-200 file:text-blue-500 file:font-semibold file:border-0 file:bg-transparent file:mr-4 hover:file:bg-transparent cursor-pointer"
                                 />
                             </div>
 
                             <DialogFooter className="pt-4">
-                                <Button type="submit" disabled={isSubmitting} className="w-full bg-blue-600 hover:bg-blue-500 text-white">
-                                    {isSubmitting ? "Uploading..." : "Save to Vault"}
+                                <Button type="button" onClick={handleSave} disabled={isSubmitting || isUploading} className="w-full bg-blue-600 hover:bg-blue-500 text-white">
+                                    {(isSubmitting || isUploading) ? "Uploading & Saving..." : "Save Document"}
                                 </Button>
                             </DialogFooter>
-                        </form>
+                        </div>
                     </DialogContent>
                 </Dialog>
 
