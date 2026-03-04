@@ -1,11 +1,32 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 import { promises as fs } from "fs";
 import path from "path";
 
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
     try {
+        const { userId: clerkId } = await auth();
+        if (!clerkId) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { userId: clerkId }
+        });
+
+        if (!user) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
         const { id } = await context.params;
+
+        // Verify ownership
+        const existingDoc = await prisma.document.findUnique({ where: { id } });
+        if (!existingDoc || existingDoc.userId !== user.id) {
+            return NextResponse.json({ error: "Document not found or access denied" }, { status: 404 });
+        }
+
         const body = await request.json();
         const { name, type, applicationId } = body;
 
@@ -27,12 +48,25 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
 
 export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
     try {
+        const { userId: clerkId } = await auth();
+        if (!clerkId) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { userId: clerkId }
+        });
+
+        if (!user) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
         const { id } = await context.params;
 
         const doc = await prisma.document.findUnique({ where: { id } });
 
-        if (!doc) {
-            return NextResponse.json({ error: "Document not found" }, { status: 404 });
+        if (!doc || doc.userId !== user.id) {
+            return NextResponse.json({ error: "Document not found or access denied" }, { status: 404 });
         }
 
         // Attempt physical file deletion if fileUrl is physical

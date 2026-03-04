@@ -3,7 +3,7 @@ import Groq from "groq-sdk";
 
 export async function POST(request: Request) {
   try {
-    const { targetProgram, targetUniversity, extracurriculars, cvText } = await request.json();
+    const { targetProgram, targetUniversity, extracurriculars, cvText, baseProfile } = await request.json();
 
     if (!targetProgram || !targetUniversity || !extracurriculars) {
       return NextResponse.json({ error: "Missing required parameters" }, { status: 400 });
@@ -17,6 +17,9 @@ The user is applying to study "${targetProgram}" at "${targetUniversity}".
 
 Your task is to produce a tailored CV data object. Return ONLY a valid JSON object with EXACTLY this structure:
 {
+  "fullName": "Extracted Name or fallback",
+  "email": "Extracted Email or fallback",
+  "phone": "Extracted Phone or fallback",
   "summary": "A 2-3 sentence tailored professional summary...",
   "education": [
     { "institution": "...", "degree": "...", "date": "...", "location": "..." }
@@ -31,12 +34,14 @@ RULES:
 - Rewrite the 'description' fields from the provided extracurricular data into punchy, impactful 'bullets' using strong action verbs.
 - Highlight transferable skills, leadership, and quantitative impact relevant to the target program.
 - Extract ALL education entries from the provided CV text. Do NOT stop at the first institution. Populate the 'education' array with every school, university, or institution found.
+- If a parsed PDF text is provided, you MUST extract the Name, Email, and Phone Number directly from the PDF text to use in the CV header.
+- ONLY use the provided database profile details (Name: ${baseProfile?.name || 'N/A'}, Email: ${baseProfile?.email || 'N/A'}, Phone: ${baseProfile?.phone || 'N/A'}) as a fallback IF the parsed PDF text is missing contact information, or if no PDF was uploaded.
 - Do not return Markdown. Do not wrap in \`\`\`json. Return raw, pure JSON only.`;
 
     let userMessage = `Original extracurricular data to tailor:\n${originalDataString}`;
 
     if (cvText) {
-      userMessage += `\n\nCRITICAL CONTEXT — Uploaded CV Text (extract all education and metrics from this):\n---\n${cvText.substring(0, 4000)}\n---`;
+      userMessage += `\n\nCRITICAL CONTEXT — Uploaded CV Text (extract all education, metrics, name, and contact info from this):\n---\n${cvText.substring(0, 4000)}\n---`;
     }
 
     const response = await groq.chat.completions.create({

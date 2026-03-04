@@ -1,13 +1,22 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 import { promises as fs } from "fs";
 import path from "path";
 
 export async function GET() {
     try {
-        const user = await prisma.user.findFirst();
+        const { userId: clerkId } = await auth();
+        if (!clerkId) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { userId: clerkId }
+        });
+
         if (!user) {
-            return NextResponse.json([], { status: 200 });
+            return NextResponse.json([], { status: 200 }); // Return empty if no profile
         }
 
         const documents = await prisma.document.findMany({
@@ -25,7 +34,15 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
-        const user = await prisma.user.findFirst();
+        const { userId: clerkId } = await auth();
+        if (!clerkId) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { userId: clerkId }
+        });
+
         if (!user) {
             return NextResponse.json({ error: "No master profile found." }, { status: 400 });
         }

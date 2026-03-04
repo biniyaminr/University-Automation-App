@@ -24,14 +24,37 @@ export default function ResumeBuilder() {
     useEffect(() => {
         // Fetch base profile data on load
         fetch("/api/resume-data")
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok && res.status !== 404) throw new Error("Failed to fetch");
+                return res.json();
+            })
             .then(data => {
                 if (data.id) {
                     setResumeData(data);
                     setEducationList(data.educations || []);
+                } else {
+                    // Handle null profiles gracefully
+                    setResumeData({
+                        fullName: "Your Name",
+                        email: "email@example.com",
+                        phone: "Phone",
+                        address: "Address",
+                        city: "City",
+                        country: "Country",
+                        extracurriculars: []
+                    });
+                    setEducationList([]);
                 }
             })
-            .catch(err => console.error("Error fetching resume data", err));
+            .catch(err => {
+                console.error("Error fetching resume data", err);
+                // Fallback to empty state on error so it doesn't spin forever
+                setResumeData({
+                    fullName: "Your Name",
+                    email: "email@example.com",
+                    extracurriculars: []
+                });
+            });
     }, []);
 
     const handleTailor = async () => {
@@ -55,7 +78,12 @@ export default function ResumeBuilder() {
                     targetProgram,
                     targetUniversity,
                     extracurriculars: resumeData?.extracurriculars || [],
-                    cvText: parsedCvText // Pass the optional parsed CV context
+                    cvText: parsedCvText, // Pass the optional parsed CV context
+                    baseProfile: {
+                        name: resumeData?.fullName,
+                        email: resumeData?.email,
+                        phone: resumeData?.phone
+                    }
                 })
             });
 
@@ -64,6 +92,15 @@ export default function ResumeBuilder() {
                 try {
                     const parsedData = JSON.parse(dataText);
                     console.log("Parsed AI Data:", parsedData);
+
+                    if (parsedData.fullName || parsedData.email) {
+                        setResumeData((prev: any) => ({
+                            ...prev,
+                            fullName: parsedData.fullName || prev?.fullName,
+                            email: parsedData.email || prev?.email,
+                            phone: parsedData.phone || prev?.phone
+                        }));
+                    }
 
                     setTailoredSummary(parsedData.summary || "");
 

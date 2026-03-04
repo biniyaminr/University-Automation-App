@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Groq from "groq-sdk";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 
 export async function POST(request: Request) {
     try {
@@ -10,8 +11,14 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Target University and Essay Prompt are required" }, { status: 400 });
         }
 
-        // 1. Fetch User Context from Prisma
-        const user = await prisma.user.findFirst({
+        const { userId } = await auth();
+        if (!userId) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        // 1. Fetch User Context from Prisma ensuring data isolation
+        const user = await prisma.user.findUnique({
+            where: { userId },
             include: {
                 educations: true,
                 extracurriculars: true,

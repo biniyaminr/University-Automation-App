@@ -35,10 +35,12 @@ export default function EssaysPage() {
         setGeneratedDraft("");
 
         try {
+            const finalNarrative = keyNarrative.trim() === "" ? undefined : keyNarrative.trim();
+
             const res = await fetch("/api/generate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ targetUniversity, essayPrompt, keyNarrative }),
+                body: JSON.stringify({ targetUniversity, essayPrompt, keyNarrative: finalNarrative }),
             });
 
             const data = await res.json();
