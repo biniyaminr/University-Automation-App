@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { promises as fs } from "fs";
-import path from "path";
+import { UTApi } from "uploadthing/server";
+
+const utapi = new UTApi();
 
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
     try {
@@ -69,20 +70,25 @@ export async function DELETE(request: Request, context: { params: Promise<{ id: 
             return NextResponse.json({ error: "Document not found or access denied" }, { status: 404 });
         }
 
-        // Attempt physical file deletion if fileUrl is physical
-        if (doc.fileUrl && doc.fileUrl.startsWith('/uploads/')) {
+        // Strike 1: Delete from Uploadthing cloud storage
+        // Uploadthing URLs look like: https://utfs.io/f/<fileKey>
+        if (doc.fileUrl && doc.fileUrl.includes('/f/')) {
             try {
-                const filePath = path.join(process.cwd(), "public", doc.fileUrl);
-                await fs.unlink(filePath);
+                const fileKey = doc.fileUrl.split('/f/').pop();
+                if (fileKey) {
+                    await utapi.deleteFiles(fileKey);
+                    console.log(`🗑️ Uploadthing file deleted: ${fileKey}`);
+                }
             } catch (err) {
-                console.warn("Could not delete physical file:", err);
-                // We'll proceed to delete the record anyway
+                // Log but don't block — still remove the DB record
+                console.warn("⚠️ Uploadthing deletion failed (file may already be gone):", err);
             }
         }
 
+        // Strike 2: Delete the database record
         await prisma.document.delete({ where: { id } });
 
-        return NextResponse.json({ message: "Document deleted" }, { status: 200 });
+        return NextResponse.json({ message: "Document deleted from vault and cloud storage" }, { status: 200 });
     } catch (error) {
         console.error("Error deleting document:", error);
         return NextResponse.json({ error: "Failed to delete document" }, { status: 500 });

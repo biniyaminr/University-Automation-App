@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { promises as fs } from "fs";
-import path from "path";
 
 export async function GET() {
     try {

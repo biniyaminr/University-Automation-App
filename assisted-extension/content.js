@@ -10,25 +10,32 @@ const FIELD_MAPPINGS = {
 };
 
 async function injectFile(inputElement, documentObj, delay = 0) {
-    if (!documentObj || !documentObj.fileBase64) return;
+    if (!documentObj || !documentObj.fileUrl) return;
 
     try {
-        const res = await fetch("data:application/pdf;base64," + documentObj.fileBase64);
-        const blob = await res.blob();
-        const file = new File([blob], documentObj.name + ".pdf", { type: "application/pdf" });
+        console.log("📥 Fetching file from Uploadthing:", documentObj.fileUrl);
 
-        const dt = new DataTransfer();
-        dt.items.add(file);
+        // Fetch the remote file from Uploadthing (utfs.io)
+        const response = await fetch(documentObj.fileUrl);
+        if (!response.ok) throw new Error(`Failed to fetch file: ${response.status} ${response.statusText}`);
+
+        const blob = await response.blob();
+        const fileName = documentObj.name ? documentObj.name + (blob.type.includes('pdf') ? '.pdf' : '') : 'document';
+        const file = new File([blob], fileName, { type: blob.type || 'application/pdf' });
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
 
         setTimeout(() => {
             try {
-                inputElement.files = dt.files;
+                inputElement.files = dataTransfer.files;
                 inputElement.dispatchEvent(new Event('input', { bubbles: true }));
                 inputElement.dispatchEvent(new Event('change', { bubbles: true }));
 
                 inputElement.style.backgroundColor = '#e6ffed';
                 inputElement.style.transition = 'background-color 0.3s ease';
-            } catch (err) { console.warn("Bypassed site error."); }
+                console.log("✅ File injected successfully:", fileName);
+            } catch (err) { console.warn("Bypassed site error.", err); }
         }, delay);
     } catch (error) {
         console.error("🔥 INJECTION FAILED:", error);
@@ -189,10 +196,12 @@ async function autoFillPage(profileData) {
                 return; // Skip filling for this file input
             }
 
-            if (docToInject.fileBase64) {
+            if (docToInject.fileUrl) {
                 injectFile(input, docToInject, injectDelay);
                 injectDelay += 800; // Add 800ms delay for the next file
                 filledCount++;
+            } else {
+                console.warn("⚠️ Document matched but has no fileUrl (Uploadthing URL missing):", docToInject.name);
             }
             return; // Skip normal text filling for this file input
         }

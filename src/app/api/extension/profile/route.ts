@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import fs from "fs";
-import path from "path";
 
 export const dynamic = "force-dynamic";
 
@@ -16,25 +14,11 @@ export async function GET() {
             return NextResponse.json({ error: "User profile not found" }, { status: 404 });
         }
 
-        // Attach Base64 File Encoded strings to overcome Mixed Content blockers on HTTPS portals
-        const documentsWithFiles = (user.documents || []).map((doc: any) => {
-            let fileBase64 = "";
-            if (doc.fileUrl) {
-                const filePath = path.join(process.cwd(), 'public', doc.fileUrl);
-                if (fs.existsSync(filePath)) {
-                    const fileBuffer = fs.readFileSync(filePath);
-                    fileBase64 = fileBuffer.toString('base64');
-                }
-            }
-            return {
-                ...doc,
-                fileBase64
-            };
-        });
+        // Documents already contain a `fileUrl` pointing to the Uploadthing CDN (https://utfs.io/...).
+        // The Chrome extension fetches the file directly from that URL using the DataTransfer API.
+        // No base64 encoding is needed here anymore.
+        const userPayload = { ...user };
 
-        const userPayload = { ...user, documents: documentsWithFiles };
-
-        // Return the user profile data with CORS headers explicitly enabling the extension to fetch it
         return NextResponse.json(userPayload, {
             status: 200,
             headers: {

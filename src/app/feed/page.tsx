@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ExternalLink, GraduationCap, DollarSign, Calendar, Globe, RefreshCw } from "lucide-react";
+import { ExternalLink, GraduationCap, DollarSign, Calendar, Globe, RefreshCw, Sparkles, CheckCircle2, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -28,6 +28,8 @@ export default function OpportunitiesFeed() {
     const [isSyncing, setIsSyncing] = useState(false);
     const [savingIds, setSavingIds] = useState<Set<string>>(new Set());
     const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+    const [evaluatingId, setEvaluatingId] = useState<string | null>(null);
+    const [evaluationResults, setEvaluationResults] = useState<Record<string, { score: number, strengths: string, missing: string }>>({});
 
     const fetchOpportunities = async () => {
         try {
@@ -99,6 +101,38 @@ export default function OpportunitiesFeed() {
                 next.delete(opp.id);
                 return next;
             });
+        }
+    };
+
+    const handleEvaluate = async (opp: Opportunity) => {
+        setEvaluatingId(opp.id);
+        const toastId = toast.loading(`Evaluating your fit for ${opp.university}...`);
+        try {
+            const response = await fetch("/api/evaluate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    opportunityTitle: `${opp.university} - ${opp.programName}`,
+                    opportunityDescription: opp.description
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                toast.success("Evaluation complete!", { id: toastId });
+                setEvaluationResults(prev => ({
+                    ...prev,
+                    [opp.id]: data
+                }));
+            } else {
+                toast.error(data.error || "Failed to evaluate fit.", { id: toastId });
+            }
+        } catch (error) {
+            console.error("Evaluation error:", error);
+            toast.error("An error occurred during evaluation.", { id: toastId });
+        } finally {
+            setEvaluatingId(null);
         }
     };
 
@@ -190,26 +224,81 @@ export default function OpportunitiesFeed() {
                                     )}
                                 </div>
                             </CardContent>
-                            <CardFooter className="flex gap-2">
-                                <Button variant="outline" className="flex-1" asChild>
-                                    <a href={opp.link} target="_blank" rel="noopener noreferrer">
-                                        View Link
-                                        <ExternalLink className="ml-2 h-3.5 w-3.5" />
-                                    </a>
-                                </Button>
-                                <Button
-                                    className="flex-1"
-                                    onClick={() => handleSaveToTracker(opp)}
-                                    disabled={savingIds.has(opp.id) || savedIds.has(opp.id)}
-                                >
-                                    {savingIds.has(opp.id) ? (
-                                        <RefreshCw className="mr-2 h-3.5 w-3.5 animate-spin" />
-                                    ) : savedIds.has(opp.id) ? (
-                                        "Saved ✓"
-                                    ) : (
-                                        "Save Tracker"
-                                    )}
-                                </Button>
+                            <CardFooter className="flex flex-col gap-3 w-full">
+                                <div className="flex w-full gap-2">
+                                    <Button variant="outline" className="flex-1" asChild>
+                                        <a href={opp.link} target="_blank" rel="noopener noreferrer">
+                                            View Link
+                                            <ExternalLink className="ml-2 h-3.5 w-3.5" />
+                                        </a>
+                                    </Button>
+                                    <Button
+                                        className="flex-1"
+                                        onClick={() => handleSaveToTracker(opp)}
+                                        disabled={savingIds.has(opp.id) || savedIds.has(opp.id)}
+                                    >
+                                        {savingIds.has(opp.id) ? (
+                                            <RefreshCw className="mr-2 h-3.5 w-3.5 animate-spin" />
+                                        ) : savedIds.has(opp.id) ? (
+                                            "Saved ✓"
+                                        ) : (
+                                            "Save Tracker"
+                                        )}
+                                    </Button>
+                                </div>
+
+                                {evaluationResults[opp.id] ? (
+                                    <div className="w-full relative mt-1 p-4 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent overflow-hidden shadow-inner flex flex-col gap-3 text-left">
+                                        <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-sm font-semibold flex items-center gap-2">
+                                                <Sparkles className="w-4 h-4 text-primary" />
+                                                AI Fit Analysis
+                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-medium text-gray-400">Match Score</span>
+                                                <div className={`px-3 py-1 rounded-full border text-lg font-bold ${evaluationResults[opp.id].score >= 80
+                                                        ? 'text-green-400 bg-green-400/10 border-green-400/20'
+                                                        : evaluationResults[opp.id].score >= 50
+                                                            ? 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20'
+                                                            : 'text-red-400 bg-red-400/10 border-red-400/20'
+                                                    }`}>
+                                                    {evaluationResults[opp.id].score}%
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2.5 text-sm mt-1">
+                                            <div className="flex gap-2 items-start">
+                                                <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                                                <p className="text-muted-foreground leading-snug"><strong className="text-foreground font-semibold">Strengths:</strong> {evaluationResults[opp.id].strengths}</p>
+                                            </div>
+                                            <div className="flex gap-2 items-start">
+                                                <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                                                <p className="text-muted-foreground leading-snug"><strong className="text-foreground font-semibold">Missing:</strong> {evaluationResults[opp.id].missing}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <Button
+                                        variant="secondary"
+                                        className="w-full relative overflow-hidden group border border-primary/20 hover:border-primary/50 transition-colors bg-secondary/50 hover:bg-secondary"
+                                        onClick={() => handleEvaluate(opp)}
+                                        disabled={evaluatingId === opp.id}
+                                    >
+                                        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                        {evaluatingId === opp.id ? (
+                                            <>
+                                                <RefreshCw className="mr-2 h-4 w-4 animate-spin text-primary" />
+                                                <span className="font-medium">Analyzing Profile...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Sparkles className="mr-2 h-4 w-4 text-primary group-hover:animate-pulse" />
+                                                <span className="font-semibold text-primary drop-shadow-sm">✨ Evaluate Fit</span>
+                                            </>
+                                        )}
+                                    </Button>
+                                )}
                             </CardFooter>
                         </Card>
                     ))}
