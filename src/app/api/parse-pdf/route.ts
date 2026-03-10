@@ -12,9 +12,9 @@ export async function POST(req: Request) {
         // Convert the File to a Buffer
         const buffer = Buffer.from(await file.arrayBuffer());
 
-        // Import pdf-parse and parse the buffer
-        const pdfParse = require('pdf-parse');
-        const data = await pdfParse(buffer);
+        // Import pdf-extraction and parse the buffer
+        const pdfExtraction = require('pdf-extraction');
+        const data = await pdfExtraction(buffer);
 
         // Return the extracted text
         return NextResponse.json({ text: data.text }, { status: 200 });
