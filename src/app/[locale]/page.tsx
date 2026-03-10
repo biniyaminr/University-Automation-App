@@ -7,7 +7,10 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
 
 export default function LandingPage() {
-  const t = useTranslations("Hero");
+  const tHero = useTranslations("Hero");
+  const tNav = useTranslations("Nav");
+  const tFeatures = useTranslations("Features");
+  const tAbout = useTranslations("About");
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-violet-500/30">
       {/* Nav */}
@@ -24,14 +27,14 @@ export default function LandingPage() {
             <SignedOut>
               <SignUpButton mode="modal">
                 <button className="text-neutral-300 hover:text-white hover:bg-neutral-800 px-4 py-2 rounded-md transition-colors font-medium">
-                  Get Started
+                  {tNav("getStarted")}
                 </button>
               </SignUpButton>
             </SignedOut>
             <SignedIn>
               <Link href="/dashboard">
                 <button className="bg-neutral-800 text-white hover:bg-neutral-700 px-4 py-2 rounded-md transition-colors font-medium">
-                  Mission Control
+                  {tNav("missionControl")}
                 </button>
               </Link>
             </SignedIn>
@@ -48,10 +51,10 @@ export default function LandingPage() {
           <div className="absolute top-0 left-1/2 w-[800px] h-[400px] bg-violet-600/20 blur-[100px] rounded-full -translate-x-1/2 pointer-events-none -z-10" />
 
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-neutral-200 to-neutral-500">
-            {t("title")}
+            {tHero("title")}
           </h1>
           <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed">
-            {t("subtitle")}
+            {tHero("subtitle")}
           </p>
 
           <div className="pt-8 flex items-center justify-center gap-4">
@@ -92,9 +95,9 @@ export default function LandingPage() {
             <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <Globe className="w-6 h-6 text-blue-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">Live Opportunity Feed</h3>
+            <h3 className="text-xl font-bold text-white mb-3">{tFeatures("feedTitle")}</h3>
             <p className="text-neutral-400 leading-relaxed">
-              Sync with global university scholarships and check your AI Fit Score.
+              {tFeatures("feedDesc")}
             </p>
           </div>
 
@@ -102,9 +105,9 @@ export default function LandingPage() {
             <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <FileText className="w-6 h-6 text-violet-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">AI CV Maker</h3>
+            <h3 className="text-xl font-bold text-white mb-3">{tFeatures("cvTitle")}</h3>
             <p className="text-neutral-400 leading-relaxed">
-              Upload your existing resume and let AI tailor it perfectly to your target program.
+              {tFeatures("cvDesc")}
             </p>
           </div>
 
@@ -112,9 +115,9 @@ export default function LandingPage() {
             <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <Zap className="w-6 h-6 text-orange-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">Chrome Auto-Fill</h3>
+            <h3 className="text-xl font-bold text-white mb-3">{tFeatures("chromeTitle")}</h3>
             <p className="text-neutral-400 leading-relaxed">
-              Store your documents in the Cloud Vault and auto-fill university portals instantly.
+              {tFeatures("chromeDesc")}
             </p>
           </div>
         </div>
@@ -126,12 +129,12 @@ export default function LandingPage() {
 
           <div className="max-w-4xl mx-auto px-4 text-center z-10 relative">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6">
-              The old way is broken.
+              {tAbout("title")}
             </h2>
             <p className="text-xl md:text-2xl text-neutral-400 leading-relaxed font-light">
-              Applying to universities takes hundreds of hours. From rewriting CVs for every single program to manually typing your address 50 times across archaic portals, the entire process is exhausting and prone to error.
+              {tAbout("desc")}
               <br /><br />
-              <span className="text-violet-400 font-medium">We built AssistedApp to fix that.</span>
+              <span className="text-violet-400 font-medium">{tAbout("solution")}</span>
             </p>
           </div>
         </section>

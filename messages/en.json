@@ -6,5 +6,29 @@
     "Nav": {
         "getStarted": "Get Started",
         "missionControl": "Mission Control"
+    },
+    "Features": {
+        "feedTitle": "Live Opportunity Feed",
+        "feedDesc": "Sync with global university scholarships and check your AI Fit Score.",
+        "cvTitle": "AI CV Maker",
+        "cvDesc": "Upload your existing resume and let AI tailor it perfectly to your target program.",
+        "chromeTitle": "Chrome Auto-Fill",
+        "chromeDesc": "Store your documents in the Cloud Vault and auto-fill university portals instantly."
+    },
+    "About": {
+        "title": "The old way is broken.",
+        "desc": "Applying to universities takes hundreds of hours. From rewriting CVs for every single program to manually typing your address 50 times across archaic portals, the entire process is exhausting and prone to error.",
+        "solution": "We built AssistedApp to fix that."
+    },
+    "Sidebar": {
+        "mainMenu": "MAIN MENU",
+        "missionDashboard": "Mission Dashboard",
+        "masterProfile": "Master Profile",
+        "aiEssays": "AI Essays",
+        "aiCvMaker": "AI CV Maker",
+        "discoverPrograms": "Discover Programs",
+        "applicationTracker": "Application Tracker",
+        "liveFeed": "Live Feed",
+        "pricing": "Pricing & Pro"
     }
 }

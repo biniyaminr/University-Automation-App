@@ -17,48 +17,50 @@ import {
 } from "@/components/ui/sidebar";
 import { Home, FileText, User, GraduationCap, Briefcase, Compass, LogIn, CreditCard, Sparkles } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { useTranslations } from "next-intl";
 
 export function AppSidebar() {
     const pathname = usePathname();
+    const t = useTranslations("Sidebar");
 
     const items = [
         {
-            title: "Mission Dashboard",
+            title: t("missionDashboard"),
             url: "/dashboard",
             icon: Home,
         },
         {
-            title: "Master Profile",
+            title: t("masterProfile"),
             url: "/profile",
             icon: User,
         },
         {
-            title: "AI Essays",
+            title: t("aiEssays"),
             url: "/essays",
             icon: FileText,
         },
         {
-            title: "AI CV Maker",
+            title: t("aiCvMaker"),
             url: "/resume",
             icon: Briefcase,
         },
         {
-            title: "Discover Programs",
+            title: t("discoverPrograms"),
             url: "/discover",
             icon: Compass,
         },
         {
-            title: "Application Tracker",
+            title: t("applicationTracker"),
             url: "/applications",
             icon: GraduationCap,
         },
         {
-            title: "Live Feed",
+            title: t("liveFeed"),
             url: "/feed",
             icon: Sparkles,
         },
         {
-            title: "Pricing & Pro",
+            title: t("pricing"),
             url: "/pricing",
             icon: CreditCard,
         },
@@ -71,7 +73,7 @@ export function AppSidebar() {
             </SidebarHeader>
             <SidebarContent className="bg-transparent pt-4">
                 <SidebarGroup>
-                    <SidebarGroupLabel className="text-muted-foreground font-semibold px-4 tracking-wider text-xs uppercase mb-2">Main Menu</SidebarGroupLabel>
+                    <SidebarGroupLabel className="text-muted-foreground font-semibold px-4 tracking-wider text-xs uppercase mb-2">{t("mainMenu")}</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu className="px-2 space-y-1">
                             {items.map((item) => {
