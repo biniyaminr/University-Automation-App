@@ -7,7 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const isLandingPage = pathname === "/";
+    const isLandingPage = pathname === "/" || pathname === "/en" || pathname === "/am";
 
     if (isLandingPage) {
         return (

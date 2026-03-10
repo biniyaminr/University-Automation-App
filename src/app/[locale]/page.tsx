@@ -4,8 +4,10 @@ import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { Globe, FileText, Zap, CheckCircle, Sparkles } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useTranslations } from "next-intl";
 
 export default function LandingPage() {
+  const t = useTranslations("Hero");
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-violet-500/30">
       {/* Nav */}
@@ -46,10 +48,10 @@ export default function LandingPage() {
           <div className="absolute top-0 left-1/2 w-[800px] h-[400px] bg-violet-600/20 blur-[100px] rounded-full -translate-x-1/2 pointer-events-none -z-10" />
 
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-neutral-200 to-neutral-500">
-            Automate Your <br className="hidden md:block" /> University Applications.
+            {t("title")}
           </h1>
           <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed">
-            Discover fully funded scholarships, instantly tailor your CV with AI, and auto-fill complex university portals in one click.
+            {t("subtitle")}
           </p>
 
           <div className="pt-8 flex items-center justify-center gap-4">
