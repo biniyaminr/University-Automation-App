@@ -51,7 +51,7 @@ export default function OpportunitiesFeed() {
 
     const handleSync = async () => {
         setIsSyncing(true);
-        const toastId = toast.loading("Syncing latest opportunities from Telegram...");
+        const toastId = toast.loading("Querying international scholarship databases...");
         try {
             const response = await fetch("/api/admin/sync-telegram");
             const data = await response.json();
@@ -258,10 +258,10 @@ export default function OpportunitiesFeed() {
                                             <div className="flex items-center gap-2">
                                                 <span className="text-sm font-medium text-gray-400">Match Score</span>
                                                 <div className={`px-3 py-1 rounded-full border text-lg font-bold ${evaluationResults[opp.id].score >= 80
-                                                        ? 'text-green-400 bg-green-400/10 border-green-400/20'
-                                                        : evaluationResults[opp.id].score >= 50
-                                                            ? 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20'
-                                                            : 'text-red-400 bg-red-400/10 border-red-400/20'
+                                                    ? 'text-green-400 bg-green-400/10 border-green-400/20'
+                                                    : evaluationResults[opp.id].score >= 50
+                                                        ? 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20'
+                                                        : 'text-red-400 bg-red-400/10 border-red-400/20'
                                                     }`}>
                                                     {evaluationResults[opp.id].score}%
                                                 </div>

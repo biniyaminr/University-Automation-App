@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Download, Wand2 } from "lucide-react";
+import { Loader2, Download, Wand2, GraduationCap, Building, UploadCloud, Sparkles } from "lucide-react";
 import { useReactToPrint } from "react-to-print";
 
 export default function ResumeBuilder() {
@@ -19,6 +19,8 @@ export default function ResumeBuilder() {
     const [educationList, setEducationList] = useState<any[]>([]);
     const [tailoredExperience, setTailoredExperience] = useState<any[]>([]);
     const [tailoredSkills, setTailoredSkills] = useState<string[]>([]);
+    const [uploadedFileName, setUploadedFileName] = useState("");
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const resumeRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -141,6 +143,7 @@ export default function ResumeBuilder() {
             alert("Please upload a valid PDF file.");
             return;
         }
+        setUploadedFileName(file.name);
 
         setIsParsingPDF(true);
         const formData = new FormData();
@@ -195,35 +198,60 @@ export default function ResumeBuilder() {
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-neutral-300 ml-1">Target Program</label>
-                                    <Input
-                                        placeholder="e.g. Computer Science"
-                                        value={targetProgram}
-                                        onChange={(e) => setTargetProgram(e.target.value)}
-                                        className="bg-neutral-800/50 border-neutral-700 text-neutral-100 placeholder:text-neutral-500 h-12"
-                                    />
+                                    <div className="relative">
+                                        <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 pointer-events-none" />
+                                        <input
+                                            placeholder="e.g. Computer Science"
+                                            value={targetProgram}
+                                            onChange={(e) => setTargetProgram(e.target.value)}
+                                            className="w-full pl-10 pr-3 h-12 rounded-md bg-zinc-900 border border-neutral-700 text-neutral-100 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm"
+                                        />
+                                    </div>
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-neutral-300 ml-1">Target University</label>
-                                    <Input
-                                        placeholder="e.g. Stanford"
-                                        value={targetUniversity}
-                                        onChange={(e) => setTargetUniversity(e.target.value)}
-                                        className="bg-neutral-800/50 border-neutral-700 text-neutral-100 placeholder:text-neutral-500 h-12"
-                                    />
+                                    <div className="relative">
+                                        <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 pointer-events-none" />
+                                        <input
+                                            placeholder="e.g. Stanford"
+                                            value={targetUniversity}
+                                            onChange={(e) => setTargetUniversity(e.target.value)}
+                                            className="w-full pl-10 pr-3 h-12 rounded-md bg-zinc-900 border border-neutral-700 text-neutral-100 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm"
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-neutral-300 ml-1">Upload Existing CV (Optional)</label>
-                                <Input
+                                <input
+                                    ref={fileInputRef}
                                     type="file"
                                     accept=".pdf"
                                     onChange={handleFileUpload}
-                                    className="bg-neutral-800/50 border-neutral-700 text-neutral-100 placeholder:text-neutral-500 h-10 file:text-white file:border-0 file:bg-neutral-700 file:rounded file:px-2 file:py-1 file:mr-2 cursor-pointer pt-1"
+                                    className="hidden"
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className={`w-full flex flex-col items-center justify-center gap-2 py-6 rounded-lg border-2 border-dashed transition-all cursor-pointer ${uploadedFileName
+                                        ? "border-emerald-500/50 bg-emerald-500/5"
+                                        : "border-zinc-700 hover:border-violet-500 hover:bg-zinc-800/50"
+                                        }`}
+                                >
+                                    <UploadCloud className={`w-7 h-7 ${uploadedFileName ? "text-emerald-400" : "text-neutral-500"}`} />
+                                    {uploadedFileName ? (
+                                        <span className="text-sm font-medium text-emerald-400 px-2 text-center break-all">{uploadedFileName}</span>
+                                    ) : (
+                                        <>
+                                            <span className="text-sm font-medium text-neutral-300">Click to upload your existing CV</span>
+                                            <span className="text-xs text-neutral-500">PDF (Max 5MB)</span>
+                                        </>
+                                    )}
+                                </button>
                                 {isParsingPDF && (
                                     <p className="text-xs text-blue-400 flex items-center mt-1">
                                         <Loader2 className="w-3 h-3 animate-spin mr-1" /> Reading PDF...
@@ -232,7 +260,7 @@ export default function ResumeBuilder() {
                                 {parsedCvText && !isParsingPDF && (
                                     <div className="text-xs text-emerald-400 mt-1 flex items-center gap-1">
                                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
-                                        PDF successfully parsed and acts as AI context.
+                                        PDF parsed — ready to use as AI context.
                                     </div>
                                 )}
                             </div>
@@ -241,12 +269,12 @@ export default function ResumeBuilder() {
                         <Button
                             onClick={handleTailor}
                             disabled={isTailoring || !targetProgram || !targetUniversity}
-                            className="w-full h-12 bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/30 transition-all font-semibold"
+                            className="w-full h-12 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-lg shadow-violet-500/20 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isTailoring ? (
                                 <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Tailoring with AI...</>
                             ) : (
-                                <><Wand2 className="mr-2 h-5 w-5" /> Tailor with AI</>
+                                <><Sparkles className="mr-2 h-5 w-5" /> Tailor with AI</>
                             )}
                         </Button>
 

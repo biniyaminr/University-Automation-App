@@ -207,7 +207,7 @@ export default function DiscoverPage() {
                 <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-6 backdrop-blur-sm">
                     <h3 className="mb-4 text-lg font-medium text-neutral-200">AI Program Scraper</h3>
                     <p className="mb-6 text-sm text-neutral-400">
-                        Paste a link to any university program page. Gemini AI will read the page and extract the key admission requirements instantly.
+                        Paste a link to any university program page. AssistedApp will scan the page and instantly extract the key admission requirements.
                     </p>
 
                     <form onSubmit={handleScan} className="flex flex-col gap-4 sm:flex-row">
