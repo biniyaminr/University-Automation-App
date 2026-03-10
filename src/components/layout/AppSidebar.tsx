@@ -24,7 +24,7 @@ export function AppSidebar() {
     const items = [
         {
             title: "Mission Dashboard",
-            url: "/",
+            url: "/dashboard",
             icon: Home,
         },
         {
