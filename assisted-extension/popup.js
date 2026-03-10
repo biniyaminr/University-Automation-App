@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             console.log("1. Popup: Button clicked, fetching data...");
             // Fetch real DB profile from Next.js local server, completely bypassing browser network cache
-            const response = await fetch('http://localhost:3000/api/extension/profile', { cache: 'no-store' });
+            const response = await fetch('https://university-automation-app.vercel.app/api/extension/profile', { cache: 'no-store' });
             if (!response.ok) throw new Error("Failed to fetch profile");
             const profileData = await response.json();
 
@@ -34,8 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         } catch (error) {
-            console.error("Extension fetch error:", error);
-            alert("Ensure the Next.js server is running on localhost:3000!");
+            console.error(error);
+            alert("Ensure the Vercel app is running!");
         }
     });
 });

@@ -3,8 +3,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const profileDataContainer = document.getElementById('profileData');
     // 1. Instantly fetch and render the vault
     try {
-        const response = await fetch('http://localhost:3000/api/extension/profile');
-        if (!response.ok) throw new Error('Network response was not ok');
+        const response = await fetch('https://university-automation-app.vercel.app/api/extension/profile');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
         const profile = await response.json();
 
         profileDataContainer.innerHTML = ''; // Clear loading text
@@ -48,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         });
     } catch (error) {
-        profileDataContainer.innerHTML = 'Error connecting to your database. Ensure localhost:3000 is running!';
+        profileDataContainer.innerHTML = 'Error connecting to your database. Ensure the Vercel app is running!';
         console.error('Fetch error:', error);
     }
 

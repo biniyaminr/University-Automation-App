@@ -105,7 +105,7 @@ async function autoFillPage(profileData) {
 
         if (scrapedLabels.length > 0) {
             try {
-                const mapRes = await fetch("http://localhost:3000/api/extension/ai-map", {
+                const mapRes = await fetch("https://university-automation-app.vercel.app/api/extension/ai-map", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ scrapedLabels, availableCategories })
