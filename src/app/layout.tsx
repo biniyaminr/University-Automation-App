@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AssistedApp - Mission Control",
-  description: "Track, manage, and automate your university applications.",
+  title: "AssistedApp | Automate Your University Applications",
+  description: "Discover fully funded scholarships, tailor your CV with AI, and auto-fill university portals instantly.",
 };
 
 export default function RootLayout({
