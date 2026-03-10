@@ -1,8 +1,24 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import { AppSidebar } from "./AppSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+    const pathname = usePathname();
+    const isLandingPage = pathname === "/";
+
+    if (isLandingPage) {
+        return (
+            <TooltipProvider>
+                <div className="w-full min-h-screen">
+                    {children}
+                </div>
+            </TooltipProvider>
+        );
+    }
+
     return (
         <TooltipProvider>
             <SidebarProvider defaultOpen>
