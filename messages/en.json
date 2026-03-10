@@ -30,5 +30,39 @@
         "applicationTracker": "Application Tracker",
         "liveFeed": "Live Feed",
         "pricing": "Pricing & Pro"
+    },
+    "Journey": {
+        "title": "Your Journey to Acceptance",
+        "subtitle": "Three simple steps to automate your applications.",
+        "step1Title": "Set Up Your Vault",
+        "step1Desc": "Upload your transcripts, passport, and CV once. We store them absolutely securely.",
+        "step2Title": "Find & Tailor",
+        "step2Desc": "Browse live scholarships and let our AI instantly rewrite your CV to match the exact requirements of the university.",
+        "step3Title": "Auto-Fill & Submit",
+        "step3Desc": "Navigate to the university's portal and click the Chrome Extension to fill out the 10-page application in 3 seconds."
+    },
+    "DeepDive": {
+        "mainTitle": "Everything you need to land your dream program.",
+        "mainSubtitle": "We automate the busywork so you can focus on what matters. Save hundreds of hours on application writing and portal navigation.",
+        "block1Title": "Stop sending generic resumes.",
+        "block1Desc": "Our AI reads your existing PDF resume and intelligently extracts your timeline. It then dynamically rewrites and tailors every bullet point to specifically match the exact university program you are applying for.",
+        "block1Bullet1": "Maintains professional formatting automatically.",
+        "block1Bullet2": "Highlights the most relevant skills for your program.",
+        "block1Bullet3": "Exports directly to a clean, ATS-friendly PDF.",
+        "block2Title": "Never type out your address again.",
+        "block2Desc": "Store your Master Profile and secure documents in our Cloud Vault. When you land on a lengthy university application portal, our intelligent Chrome Extension auto-fills your entire history instantly.",
+        "block2Bullet1": "Maps complex portal inputs to your structured data.",
+        "block2Bullet2": "Populates education history, addresses, and contacts.",
+        "block2Bullet3": "Quick-copy capabilities for essays and secure PDFs.",
+        "block3Title": "Know your chances before you apply.",
+        "block3Desc": "Our Live Opportunity Feed actively scrapes the web for fully funded scholarships and open university positions. AI evaluates your Master Profile against the requirements to generate an instant Fit Score.",
+        "block3Bullet1": "Real-time scholarship scraping engine.",
+        "block3Bullet2": "Personalized 'Evaluate Fit' AI analysis.",
+        "block3Bullet3": "Save top opportunities to your Application Tracker."
+    },
+    "BottomCTA": {
+        "title": "Ready to land your dream program?",
+        "button": "Start Applying for Free",
+        "footer": "© 2026 AssistedApp. All rights reserved."
     }
 }

@@ -11,6 +11,9 @@ export default function LandingPage() {
   const tNav = useTranslations("Nav");
   const tFeatures = useTranslations("Features");
   const tAbout = useTranslations("About");
+  const tJourney = useTranslations("Journey");
+  const tDeepDive = useTranslations("DeepDive");
+  const tBottomCTA = useTranslations("BottomCTA");
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-violet-500/30">
       {/* Nav */}
@@ -143,9 +146,9 @@ export default function LandingPage() {
         <section className="py-24 max-w-5xl mx-auto px-4 relative z-10 w-full">
           <div className="text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">
-              Your Journey to Acceptance
+              {tJourney("title")}
             </h2>
-            <p className="text-xl text-neutral-400">Three simple steps to automate your applications.</p>
+            <p className="text-xl text-neutral-400">{tJourney("subtitle")}</p>
           </div>
 
           <div className="space-y-12 relative before:absolute before:inset-0 before:ml-8 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-white/10 before:to-transparent">
@@ -159,8 +162,8 @@ export default function LandingPage() {
                 <div className="flex items-center mb-1">
                   <span className="text-sm font-semibold text-blue-400 tracking-wider uppercase">Step 1</span>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Set Up Your Vault</h3>
-                <p className="text-neutral-400 leading-relaxed">Upload your transcripts, passport, and CV once. We store them absolutely securely.</p>
+                <h3 className="text-2xl font-bold text-white mb-2">{tJourney("step1Title")}</h3>
+                <p className="text-neutral-400 leading-relaxed">{tJourney("step1Desc")}</p>
               </div>
             </div>
 
@@ -173,8 +176,8 @@ export default function LandingPage() {
                 <div className="flex items-center mb-1">
                   <span className="text-sm font-semibold text-violet-400 tracking-wider uppercase">Step 2</span>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Find &amp; Tailor</h3>
-                <p className="text-neutral-400 leading-relaxed">Browse live scholarships and let our AI instantly rewrite your CV to match the exact requirements of the university.</p>
+                <h3 className="text-2xl font-bold text-white mb-2">{tJourney("step2Title")}</h3>
+                <p className="text-neutral-400 leading-relaxed">{tJourney("step2Desc")}</p>
               </div>
             </div>
 
@@ -187,8 +190,8 @@ export default function LandingPage() {
                 <div className="flex items-center mb-1">
                   <span className="text-sm font-semibold text-orange-400 tracking-wider uppercase">Step 3</span>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Auto-Fill &amp; Submit</h3>
-                <p className="text-neutral-400 leading-relaxed">Navigate to the university's portal and click the Chrome Extension to fill out the 10-page application in 3 seconds.</p>
+                <h3 className="text-2xl font-bold text-white mb-2">{tJourney("step3Title")}</h3>
+                <p className="text-neutral-400 leading-relaxed">{tJourney("step3Desc")}</p>
               </div>
             </div>
 
@@ -199,10 +202,10 @@ export default function LandingPage() {
         <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 w-full border-t border-neutral-800/50 mt-12">
           <div className="text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">
-              Everything you need to land your dream program.
+              {tDeepDive("mainTitle")}
             </h2>
             <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
-              We automate the busywork so you can focus on what matters. Save hundreds of hours on application writing and portal navigation.
+              {tDeepDive("mainSubtitle")}
             </p>
           </div>
 
@@ -213,15 +216,15 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mb-4">
                   <FileText className="w-6 h-6 text-violet-400" />
                 </div>
-                <h3 className="text-3xl font-bold text-white">Stop sending generic resumes.</h3>
+                <h3 className="text-3xl font-bold text-white">{tDeepDive("block1Title")}</h3>
                 <p className="text-lg text-neutral-400 leading-relaxed">
-                  Our AI reads your existing PDF resume and intelligently extracts your timeline. It then dynamically rewrites and tailors every bullet point to specifically match the exact university program you are applying for.
+                  {tDeepDive("block1Desc")}
                 </p>
                 <ul className="space-y-3 pt-4">
                   {[
-                    "Maintains professional formatting automatically.",
-                    "Highlights the most relevant skills for your program.",
-                    "Exports directly to a clean, ATS-friendly PDF."
+                    tDeepDive("block1Bullet1"),
+                    tDeepDive("block1Bullet2"),
+                    tDeepDive("block1Bullet3")
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-neutral-300">
                       <CheckCircle className="w-5 h-5 text-violet-500 shrink-0" />
@@ -278,15 +281,15 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
                   <Zap className="w-6 h-6 text-orange-400" />
                 </div>
-                <h3 className="text-3xl font-bold text-white">Never type out your address again.</h3>
+                <h3 className="text-3xl font-bold text-white">{tDeepDive("block2Title")}</h3>
                 <p className="text-lg text-neutral-400 leading-relaxed">
-                  Store your Master Profile and secure documents in our Cloud Vault. When you land on a lengthy university application portal, our intelligent Chrome Extension auto-fills your entire history instantly.
+                  {tDeepDive("block2Desc")}
                 </p>
                 <ul className="space-y-3 pt-4">
                   {[
-                    "Maps complex portal inputs to your structured data.",
-                    "Populates education history, addresses, and contacts.",
-                    "Quick-copy capabilities for essays and secure PDFs."
+                    tDeepDive("block2Bullet1"),
+                    tDeepDive("block2Bullet2"),
+                    tDeepDive("block2Bullet3")
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-neutral-300">
                       <CheckCircle className="w-5 h-5 text-orange-500 shrink-0" />
@@ -340,15 +343,15 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4">
                   <Globe className="w-6 h-6 text-blue-400" />
                 </div>
-                <h3 className="text-3xl font-bold text-white">Know your chances before you apply.</h3>
+                <h3 className="text-3xl font-bold text-white">{tDeepDive("block3Title")}</h3>
                 <p className="text-lg text-neutral-400 leading-relaxed">
-                  Our Live Opportunity Feed actively scrapes the web for fully funded scholarships and open university positions. AI evaluates your Master Profile against the requirements to generate an instant Fit Score.
+                  {tDeepDive("block3Desc")}
                 </p>
                 <ul className="space-y-3 pt-4">
                   {[
-                    "Real-time scholarship scraping engine.",
-                    "Personalized 'Evaluate Fit' AI analysis.",
-                    "Save top opportunities to your Application Tracker."
+                    tDeepDive("block3Bullet1"),
+                    tDeepDive("block3Bullet2"),
+                    tDeepDive("block3Bullet3")
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-neutral-300">
                       <CheckCircle className="w-5 h-5 text-blue-500 shrink-0" />
@@ -395,20 +398,20 @@ export default function LandingPage() {
 
           <div className="max-w-3xl mx-auto px-4 text-center z-10 space-y-8">
             <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white">
-              Ready to land your dream program?
+              {tBottomCTA("title")}
             </h2>
             <div className="pt-4 flex items-center justify-center gap-4">
               <SignedOut>
                 <SignUpButton mode="modal">
                   <button className="h-16 px-10 text-xl font-bold bg-white hover:bg-neutral-200 text-neutral-950 rounded-full shadow-[0_0_50px_-10px_rgba(255,255,255,0.5)] transition-all hover:scale-105">
-                    Start Applying for Free
+                    {tBottomCTA("button")}
                   </button>
                 </SignUpButton>
               </SignedOut>
               <SignedIn>
                 <Link href="/dashboard">
                   <button className="h-16 px-10 text-xl font-bold bg-white hover:bg-neutral-200 text-neutral-950 rounded-full shadow-[0_0_50px_-10px_rgba(255,255,255,0.5)] transition-all hover:scale-105">
-                    Enter Mission Control
+                    {tNav("missionControl")}
                   </button>
                 </Link>
               </SignedIn>
@@ -420,7 +423,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-neutral-800/50 py-8 text-center text-neutral-500 text-sm">
-        <p>&copy; {new Date().getFullYear()} AssistedApp. All rights reserved.</p>
+        <p>{tBottomCTA("footer")}</p>
       </footer>
     </div>
   );
